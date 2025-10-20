@@ -40,21 +40,25 @@ def exibir_extrato(saldo, /, *, extrato):
     print(f"Saldo: R$ {saldo:.2f}")
     print("================")
 def criar_usuario(usuarios):
-    cpf = input("Informe o CPF (somente números): ")
-    usuario = filtrar_usuario(cpf, usuarios)
-    if usuario:
-        print("Já existe um usuário com esse CPF!")
-        return
-    nome = input("Informe o nome completo: ")
-    data_nascimento = input("Informe a data de nascimento (DD/MM/AAAA): ")
-    endereco = input("Informe o endereço (logradouro, número - bairro - cidade/sigla estado): ")
-    usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
-    print("Usuário criado com sucesso!")
+        import re
+        cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+        if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos.")
+            return
+        usuario = filtrar_usuario(cpf, usuarios)
+        if usuario:
+            print("Já existe um usuário com esse CPF!")
+            return
+        nome = input("Informe o nome completo: ")
+        data_nascimento = input("Informe a data de nascimento (DD/MM/AAAA): ")
+        endereco = input("Informe o endereço (logradouro, número - bairro - cidade/sigla estado): ")
+        usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
+        print("Usuário criado com sucesso!")
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
 def criar_conta(agencia, numero_conta, usuarios):
-    cpf = input("Informe o CPF do usuário: ")
+    cpf = input("Informe o CPF do usuário (formato xxx.xxx.xxx-xx): ")
     usuario = filtrar_usuario(cpf, usuarios)
     if usuario:
         conta = {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
@@ -64,7 +68,7 @@ def criar_conta(agencia, numero_conta, usuarios):
     return None
 
 def listar_contas(contas):
-    cpf = input("Informe o CPF para filtrar as contas (pressione Enter para listar todas): ").strip()
+    cpf = input("Informe o CPF, (formato xxx.xxx.xxx-xx), para filtrar as contas (pressione Enter para listar todas): ").strip()
     print()
     contas_filtradas = contas
     if cpf:
