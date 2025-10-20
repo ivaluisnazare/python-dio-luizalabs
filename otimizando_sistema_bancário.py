@@ -8,6 +8,7 @@ def menu():
     print("[lc] Listar Contas")
     print("[nu] Novo Usuário")
     return input("Escolha uma opção: ").lower()
+
 def depositar(saldo, valor, extrato, /):
     if valor > 0:
         saldo += valor
@@ -16,6 +17,7 @@ def depositar(saldo, valor, extrato, /):
     else:
         print("Operação falhou! O valor informado é inválido.")
     return saldo, extrato
+
 def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
     if valor > saldo:
         print("Operação falhou! Saldo insuficiente.")
@@ -31,6 +33,7 @@ def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
     else:
         print("Operação falhou! O valor informado é inválido.")
     return saldo, extrato, numero_saques
+
 def exibir_extrato(saldo, /, *, extrato):
     print("\n=== Extrato ===")
     if extrato == "":
@@ -39,24 +42,33 @@ def exibir_extrato(saldo, /, *, extrato):
         print(extrato)
     print(f"Saldo: R$ {saldo:.2f}")
     print("================")
+
 def criar_usuario(usuarios):
-        import re
-        cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-        if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
-            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos.")
-            return
-        usuario = filtrar_usuario(cpf, usuarios)
-        if usuario:
-            print("Já existe um usuário com esse CPF!")
-            return
-        nome = input("Informe o nome completo: ")
-        data_nascimento = input("Informe a data de nascimento (DD/MM/AAAA): ")
-        endereco = input("Informe o endereço (logradouro, número - bairro - cidade/sigla estado): ")
-        usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
-        print("Usuário criado com sucesso!")
+    import re
+    from datetime import datetime
+    cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+    if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+        print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos.")
+        return
+    usuario = filtrar_usuario(cpf, usuarios)
+    if usuario:
+        print("Já existe um usuário com esse CPF!")
+        return
+    nome = input("Informe o nome completo: ").strip()
+    data_nascimento = input("Informe a data de nascimento (DD/MM/AAAA): ").strip()
+    try:
+        datetime.strptime(data_nascimento, "%d/%m/%Y")
+    except ValueError:
+        print("Data de nascimento inválida! Utilize o formato DD/MM/AAAA.")
+        return
+    endereco = input("Informe o endereço (logradouro, número - bairro - cidade/sigla estado): ").strip()
+    usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
+    print("Usuário criado com sucesso!")
+    
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
+
 def criar_conta(agencia, numero_conta, usuarios):
     cpf = input("Informe o CPF do usuário (formato xxx.xxx.xxx-xx): ")
     usuario = filtrar_usuario(cpf, usuarios)
@@ -125,6 +137,7 @@ def main():
             break
         else:
             print("Operação inválida, por favor selecione novamente a operação desejada.")
+
 if __name__ == "__main__":
     main()
 
