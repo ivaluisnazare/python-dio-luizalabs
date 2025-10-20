@@ -64,12 +64,23 @@ def criar_conta(agencia, numero_conta, usuarios):
     return None
 
 def listar_contas(contas):
-    for conta in contas:
+    cpf = input("Informe o CPF para filtrar as contas (pressione Enter para listar todas): ").strip()
+    print()
+    contas_filtradas = contas
+    if cpf:
+        contas_filtradas = [conta for conta in contas if conta["usuario"].get("cpf") == cpf]
+        if not contas_filtradas:
+            print("Nenhuma conta encontrada para o CPF informado.")
+            return
+    for conta in contas_filtradas:
         usuario = conta["usuario"]
+        print("==============================")
         print(f"""\
 Agência: {conta['agencia']}
 Número da Conta: {conta['numero_conta']}
-Titular: {usuario['nome']}""")
+Titular: {usuario['nome']}
+CPF: {usuario.get('cpf', 'N/A')}""")
+
 def main():
     saldo = 0
     limite = 500
