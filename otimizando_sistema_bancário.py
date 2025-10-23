@@ -114,7 +114,6 @@ def sacar(contas):
 
 
 def exibir_extrato(contas):
-    import re
 
     if len(contas) == 0:
         print("Operação falhou! Nenhuma conta cadastrada.")
