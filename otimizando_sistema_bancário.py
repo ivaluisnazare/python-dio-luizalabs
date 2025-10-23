@@ -43,8 +43,12 @@ def depositar(contas, cpf=None, numero_conta=None):
     if not conta_encontrada:
         print("Operação falhou! Conta não encontrada para o CPF informado.")
         return contas
+
+    # Atualiza o saldo da conta específica
     saldo_atual = conta_encontrada.get("saldo", 0)
     conta_encontrada["saldo"] = saldo_atual + valor
+
+    # Atualiza o extrato da conta específica
     extrato_conta = conta_encontrada.get("extrato", "")
     extrato_conta += f"Depósito: R$ {valor:.2f}\n"
     conta_encontrada["extrato"] = extrato_conta
@@ -93,8 +97,11 @@ def sacar(contas):
     elif numero_saques >= limite_saques:
         print("Operação falhou! Número máximo de saques diários excedido.")
     elif valor > 0:
+        # Atualiza o saldo da conta específica
         conta_encontrada["saldo"] = saldo_conta - valor
         conta_encontrada["numero_saques"] = numero_saques + 1
+
+        # Atualiza o extrato da conta específica
         extrato_conta = conta_encontrada.get("extrato", "")
         extrato_conta += f"Saque: R$ {valor:.2f}\n"
         conta_encontrada["extrato"] = extrato_conta
@@ -107,6 +114,7 @@ def sacar(contas):
 
 
 def exibir_extrato(contas):
+    import re
 
     if len(contas) == 0:
         print("Operação falhou! Nenhuma conta cadastrada.")
@@ -182,7 +190,9 @@ def criar_usuario(usuarios):
     )
 
     print("Usuário criado com sucesso!")
-    
+    return usuarios
+
+
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
@@ -199,6 +209,7 @@ def criar_conta(agencia, numero_conta, usuarios):
 
     usuario = filtrar_usuario(cpf, usuarios)
     if usuario:
+        # Inicializa a conta com saldo zero, extrato vazio e contadores
         conta = {
             "agencia": agencia,
             "numero_conta": numero_conta,
