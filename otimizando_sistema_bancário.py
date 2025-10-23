@@ -19,7 +19,7 @@ def depositar(contas, cpf=None, numero_conta=None):
 
     if cpf is None:
         cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-    if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
         print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
         return contas
 
@@ -33,15 +33,22 @@ def depositar(contas, cpf=None, numero_conta=None):
 
     conta_encontrada = None
     for conta in contas:
-        if str(conta.get("numero_conta")) == numero_conta and conta.get("usuario", {}).get("cpf") == cpf:
+        if (
+            str(conta.get("numero_conta")) == numero_conta
+            and conta.get("usuario", {}).get("cpf") == cpf
+        ):
             conta_encontrada = conta
             break
 
     if not conta_encontrada:
         print("Operação falhou! Conta não encontrada para o CPF informado.")
         return contas
+
+    # Atualiza o saldo da conta específica
     saldo_atual = conta_encontrada.get("saldo", 0)
     conta_encontrada["saldo"] = saldo_atual + valor
+
+    # Atualiza o extrato da conta específica
     extrato_conta = conta_encontrada.get("extrato", "")
     extrato_conta += f"Depósito: R$ {valor:.2f}\n"
     conta_encontrada["extrato"] = extrato_conta
@@ -58,7 +65,7 @@ def sacar(contas):
         return contas
 
     cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-    if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
         print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
         return contas
 
@@ -67,7 +74,10 @@ def sacar(contas):
 
     conta_encontrada = None
     for conta in contas:
-        if str(conta.get("numero_conta")) == numero_conta and conta.get("usuario", {}).get("cpf") == cpf:
+        if (
+            str(conta.get("numero_conta")) == numero_conta
+            and conta.get("usuario", {}).get("cpf") == cpf
+        ):
             conta_encontrada = conta
             break
 
@@ -87,8 +97,11 @@ def sacar(contas):
     elif numero_saques >= limite_saques:
         print("Operação falhou! Número máximo de saques diários excedido.")
     elif valor > 0:
+        # Atualiza o saldo da conta específica
         conta_encontrada["saldo"] = saldo_conta - valor
         conta_encontrada["numero_saques"] = numero_saques + 1
+
+        # Atualiza o extrato da conta específica
         extrato_conta = conta_encontrada.get("extrato", "")
         extrato_conta += f"Saque: R$ {valor:.2f}\n"
         conta_encontrada["extrato"] = extrato_conta
@@ -112,7 +125,10 @@ def exibir_extrato(contas):
 
     conta_encontrada = None
     for conta in contas:
-        if str(conta.get("numero_conta")) == numero_conta and conta.get("usuario", {}).get("cpf") == cpf:
+        if (
+            str(conta.get("numero_conta")) == numero_conta
+            and conta.get("usuario", {}).get("cpf") == cpf
+        ):
             conta_encontrada = conta
             break
 
@@ -140,8 +156,10 @@ def criar_usuario(usuarios):
     from datetime import datetime
 
     cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-    if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
-        print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos.")
+    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        print(
+            "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos."
+        )
         return usuarios
 
     usuario = filtrar_usuario(cpf, usuarios)
@@ -158,17 +176,23 @@ def criar_usuario(usuarios):
         print("Data de nascimento inválida! Utilize o formato DD/MM/AAAA.")
         return usuarios
 
-    endereco = input("Informe o endereço (logradouro, número - bairro - cidade/sigla estado): ").strip()
+    endereco = input(
+        "Informe o endereço (logradouro, número - bairro - cidade/sigla estado): "
+    ).strip()
 
-    usuarios.append({
-        "nome": nome,
-        "data_nascimento": data_nascimento,
-        "cpf": cpf,
-        "endereco": endereco
-    })
+    usuarios.append(
+        {
+            "nome": nome,
+            "data_nascimento": data_nascimento,
+            "cpf": cpf,
+            "endereco": endereco,
+        }
+    )
 
     print("Usuário criado com sucesso!")
-    
+    return usuarios
+
+
 def filtrar_usuario(cpf, usuarios):
     usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
     return usuarios_filtrados[0] if usuarios_filtrados else None
@@ -179,12 +203,13 @@ def criar_conta(agencia, numero_conta, usuarios):
 
     cpf = input("Informe o CPF do usuário (formato xxx.xxx.xxx-xx): ").strip()
 
-    if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
         print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
         return None
 
     usuario = filtrar_usuario(cpf, usuarios)
     if usuario:
+        # Inicializa a conta com saldo zero, extrato vazio e contadores
         conta = {
             "agencia": agencia,
             "numero_conta": numero_conta,
@@ -193,7 +218,7 @@ def criar_conta(agencia, numero_conta, usuarios):
             "extrato": "",
             "numero_saques": 0,
             "limite": 500,
-            "limite_saques": 3
+            "limite_saques": 3,
         }
 
         print("Conta criada com sucesso!")
@@ -207,14 +232,17 @@ def listar_contas(contas):
     import re
 
     cpf = input(
-        "Informe o CPF, (formato xxx.xxx.xxx-xx), para filtrar as contas (pressione Enter para listar todas): ").strip()
+        "Informe o CPF, (formato xxx.xxx.xxx-xx), para filtrar as contas (pressione Enter para listar todas): "
+    ).strip()
 
     contas_filtradas = contas
     if cpf:
-        if not re.match(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$', cpf):
+        if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
             print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
             return
-        contas_filtradas = [conta for conta in contas if conta["usuario"].get("cpf") == cpf]
+        contas_filtradas = [
+            conta for conta in contas if conta["usuario"].get("cpf") == cpf
+        ]
 
     if not contas_filtradas:
         print("Nenhuma conta encontrada.")
@@ -225,12 +253,14 @@ def listar_contas(contas):
         usuario = conta["usuario"]
         saldo = conta.get("saldo", 0)
         print("==============================")
-        print(f"""\
+        print(
+            f"""\
 Agência: {conta['agencia']}
 Número da Conta: {conta['numero_conta']}
 Titular: {usuario['nome']}
 CPF: {usuario.get('cpf', 'N/A')}
-Saldo: R$ {saldo:.2f}""")
+Saldo: R$ {saldo:.2f}"""
+        )
 
 
 def main():
@@ -260,7 +290,9 @@ def main():
         elif opcao == "q":
             break
         else:
-            print("Operação inválida, por favor selecione novamente a operação desejada.")
+            print(
+                "Operação inválida, por favor selecione novamente a operação desejada."
+            )
 
 
 if __name__ == "__main__":
