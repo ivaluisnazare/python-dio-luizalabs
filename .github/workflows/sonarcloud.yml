@@ -12,6 +12,11 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -34,7 +39,7 @@ jobs:
         pytest --cov=./ --cov-report=xml
 
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@5f0bad70e4e5944c8d2aae4eb8aec75a97b29c0e
+      uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
