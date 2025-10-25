@@ -2,11 +2,13 @@ import re
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+# CONSTANTE PARA O PADRÃO DO CPF
+CPF_PATTERN = r"^\d{3}\.\d{3}\.\d{3}-\d{2}$"
 
 def validar_cpf(func):
     def wrapper(*args, **kwargs):
         cpf = kwargs.get("cpf") or (args[1] if len(args) > 1 else None)
-        if cpf and not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        if cpf and not re.match(CPF_PATTERN, cpf):
             print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
             return None
         return func(*args, **kwargs)
@@ -242,7 +244,7 @@ class SistemaBancario:
         if cpf is None:
             cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
 
-        if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        if not re.match(CPF_PATTERN, cpf):
             print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
             return
 
@@ -266,7 +268,7 @@ class SistemaBancario:
     @verificar_contas
     def sacar(self):
         cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-        if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        if not re.match(CPF_PATTERN, cpf):
             print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
             return
 
@@ -304,7 +306,7 @@ class SistemaBancario:
 
     def criar_usuario(self):
         cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-        if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        if not re.match(CPF_PATTERN, cpf):
             print(
                 "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos."
             )
@@ -335,7 +337,7 @@ class SistemaBancario:
     def criar_conta(self):
         cpf = input("Informe o CPF do usuário (formato xxx.xxx.xxx-xx): ").strip()
 
-        if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        if not re.match(CPF_PATTERN, cpf):
             print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
             return
 
@@ -357,7 +359,7 @@ class SistemaBancario:
 
         contas_filtradas = self.contas
         if cpf:
-            if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+            if not re.match(CPF_PATTERN, cpf):
                 print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
                 return
             contas_filtradas = [
