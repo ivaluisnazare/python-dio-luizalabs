@@ -11,18 +11,11 @@ jobs:
   sonarcloud:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v2.0.0
+      uses: SonarSource/sonarcloud-github-action@v2.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        args: >
-          -Dsonar.organization=ivaluisnazare
-          -Dsonar.projectKey=ivaluisnazare_python-dio-luizalabs
-          -Dsonar.projectName=python-dio-luizalabs
-          -Dsonar.ci.autoconfig.disabled=false
-          -Dsonar.analysis.ci=true
