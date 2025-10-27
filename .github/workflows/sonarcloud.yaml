@@ -18,3 +18,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=ivaluisnazare_python-dio-luizalabs
+          -Dsonar.organization=ivaluisnazare
+          -Dsonar.sources=.
+          -Dsonar.exclusions=**/tests/**,**/venv/**,**/.venv/**,**/__pycache__/**
+          -Dsonar.python.coverage.reportPaths=coverage.xml
+          -Dsonar.python.xunit.reportPath=test-results.xml
