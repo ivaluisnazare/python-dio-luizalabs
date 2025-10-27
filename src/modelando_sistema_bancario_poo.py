@@ -1,15 +1,13 @@
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-
-# CONSTANTE PARA O PADRÃO DO CPF
-CPF_PATTERN = r"^\d{3}\.\d{3}\.\d{3}-\d{2}$"
+from constants import *
 
 def validar_cpf(func):
     def wrapper(*args, **kwargs):
         cpf = kwargs.get("cpf") or (args[1] if len(args) > 1 else None)
         if cpf and not re.match(CPF_PATTERN, cpf):
-            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+            print(FAIL_CPF_MESSAGE)
             return None
         return func(*args, **kwargs)
 
@@ -19,7 +17,7 @@ def validar_cpf(func):
 def verificar_contas(func):
     def wrapper(self, *args, **kwargs):
         if not self.contas:
-            print("Operação falhou! Nenhuma conta cadastrada.")
+            print(FAIL_OPERATION_MESSAGE)
             return None
         return func(self, *args, **kwargs)
 
@@ -50,7 +48,7 @@ class Conta:
     def __init__(self, numero, cliente):
         self._saldo = 0
         self._numero = numero
-        self._agencia = "0001"
+        self._agencia = BRANCH
         self._cliente = cliente
         self._historico = Historico()
         self._extrato = ""
@@ -99,7 +97,7 @@ class Conta:
             self._extrato += f"Saque: R$ {valor:.2f}\n"
             return True
         else:
-            print("Operação falhou! O valor informado é inválido.")
+            print(FAIL_VALUE_MESSAGE)
             return False
 
     def depositar(self, valor):
@@ -108,7 +106,7 @@ class Conta:
             self._extrato += f"Depósito: R$ {valor:.2f}\n"
             return True
         else:
-            print("Operação falhou! O valor informado é inválido.")
+            print(FAIL_VALUE_MESSAGE)
             return False
 
 
@@ -242,14 +240,14 @@ class SistemaBancario:
     @verificar_contas
     def depositar(self, cpf=None, numero_conta=None):
         if cpf is None:
-            cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+            cpf = input(INFO_CPF_MESSAGE).strip()
 
         if not re.match(CPF_PATTERN, cpf):
-            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+            print(FAIL_CPF_MESSAGE)
             return
 
         if numero_conta is None:
-            numero_conta = input("Informe o número da conta: ").strip()
+            numero_conta = input(INFO_ACCOUNT_NUMBER_MESSAGE).strip()
 
         valor = float(input("Informe o valor do depósito: "))
         if valor <= 0:
@@ -258,7 +256,7 @@ class SistemaBancario:
 
         conta = self.filtrar_conta(cpf, numero_conta)
         if not conta:
-            print("Operação falhou! Conta não encontrada para o CPF informado.")
+            print(FAIL_OPERATION_MESSAGE)
             return
 
         transacao = Deposito(valor)
@@ -267,17 +265,17 @@ class SistemaBancario:
 
     @verificar_contas
     def sacar(self):
-        cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+        cpf = input(INFO_CPF_MESSAGE).strip()
         if not re.match(CPF_PATTERN, cpf):
-            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+            print(FAIL_CPF_MESSAGE)
             return
 
-        numero_conta = input("Informe o número da conta: ").strip()
+        numero_conta = input(INFO_ACCOUNT_NUMBER_MESSAGE).strip()
         valor = float(input("Informe o valor do saque: "))
 
         conta = self.filtrar_conta(cpf, numero_conta)
         if not conta:
-            print("Operação falhou! Conta não encontrada para o CPF informado.")
+            print(FAIL_OPERATION_MESSAGE)
             return
 
         transacao = Saque(valor)
@@ -285,12 +283,12 @@ class SistemaBancario:
 
     @verificar_contas
     def exibir_extrato(self):
-        cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-        numero_conta = input("Informe o número da conta: ").strip()
+        cpf = input(INFO_CPF_MESSAGE).strip()
+        numero_conta = input(INFO_ACCOUNT_NUMBER_MESSAGE).strip()
 
         conta = self.filtrar_conta(cpf, numero_conta)
         if not conta:
-            print("Operação falhou! Conta não encontrada para o CPF informado.")
+            print(FAIL_OPERATION_MESSAGE)
             return
 
         print("\n=== Extrato ===")
@@ -305,16 +303,16 @@ class SistemaBancario:
         print("================")
 
     def criar_usuario(self):
-        cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+        cpf = input(INFO_CPF_MESSAGE).strip()
         if not re.match(CPF_PATTERN, cpf):
             print(
-                "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos."
+                FAIL_CPF_MESSAGE
             )
             return
 
         cliente = self.filtrar_cliente(cpf)
         if cliente:
-            print("Já existe um usuário com esse CPF!")
+            print(FAIL_REGISTERED_CPF_MESSAGE)
             return
 
         nome = input("Informe o nome completo: ").strip()
@@ -335,10 +333,10 @@ class SistemaBancario:
         print("Usuário criado com sucesso!")
 
     def criar_conta(self):
-        cpf = input("Informe o CPF do usuário (formato xxx.xxx.xxx-xx): ").strip()
+        cpf = input(INFO_CPF_MESSAGE).strip()
 
         if not re.match(CPF_PATTERN, cpf):
-            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+            print(FAIL_CPF_MESSAGE)
             return
 
         cliente = self.filtrar_cliente(cpf)
@@ -354,13 +352,13 @@ class SistemaBancario:
 
     def listar_contas(self):
         cpf = input(
-            "Informe o CPF, (formato xxx.xxx.xxx-xx), para filtrar as contas (pressione Enter para listar todas): "
+            INFO_CPF_MESSAGE
         ).strip()
 
         contas_filtradas = self.contas
         if cpf:
             if not re.match(CPF_PATTERN, cpf):
-                print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+                print(FAIL_CPF_MESSAGE)
                 return
             contas_filtradas = [
                 conta for conta in self.contas if conta.cliente.cpf == cpf
