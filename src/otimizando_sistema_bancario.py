@@ -1,4 +1,4 @@
-from constants import Constants
+from src.constant import Constants
 import re
 from datetime import datetime
 
@@ -32,7 +32,7 @@ def depositar(contas, cpf=None, numero_conta=None):
     if cpf is None:
         cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
     if not re.match(Constants.CPF_PATTERN, cpf):
-        print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+        print(Constants.FAIL_CPF_MESSAGE)
         return contas
 
     if numero_conta is None:

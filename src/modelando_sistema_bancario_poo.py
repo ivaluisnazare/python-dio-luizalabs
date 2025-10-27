@@ -1,7 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-from constants import Constants
+from src.constant import Constants
 
 def validar_cpf(func):
     def wrapper(*args, **kwargs):
