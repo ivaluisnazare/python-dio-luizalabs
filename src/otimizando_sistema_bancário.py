@@ -21,7 +21,7 @@ def depositar(contas, cpf=None, numero_conta=None):
 
     if cpf is None:
         cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+    if not re.match(Constants.CPF_PATTERN, cpf):
         print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
         return contas
 
@@ -65,7 +65,7 @@ def sacar(contas):
         return contas
 
     cpf = input(Constants.INFO_CPF_MESSAGE).strip()
-    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+    if not re.match(Constants.CPF_PATTERN, cpf):
         print(Constants.FAIL_CPF_MESSAGE)
         return contas
 
@@ -154,7 +154,7 @@ def criar_usuario(usuarios):
     from datetime import datetime
 
     cpf = input(Constants.INFO_CPF_MESSAGE).strip()
-    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+    if not re.match(Constants.CPF_PATTERN, cpf):
         print(
             Constants.FAIL_CPF_MESSAGE
         )
@@ -201,7 +201,7 @@ def criar_conta(agencia, numero_conta, usuarios):
 
     cpf = input(Constants.INFO_CPF_MESSAGE).strip()
 
-    if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+    if not re.match(Constants.CPF_PATTERN, cpf):
         print(Constants.FAIL_CPF_MESSAGE)
         return None
 
@@ -234,7 +234,7 @@ def listar_contas(contas):
 
     contas_filtradas = contas
     if cpf:
-        if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
+        if not re.match(Constants.CPF_PATTERN, cpf):
             print(Constants.FAIL_CPF_MESSAGE)
             return
         contas_filtradas = [

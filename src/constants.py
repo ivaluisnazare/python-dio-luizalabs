@@ -1,5 +1,6 @@
 class Constants:
     CPF_PATTERN = r"^\d{3}\.\d{3}\.\d{3}-\d{2}$"
+    BIRTH_DATE_PATTERN = r"^\d{2}/\d{2}/\d{4}$"
 
     FAIL_CPF_MESSAGE = "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx."
     FAIL_OPERATION_MESSAGE = "Operação falhou! Nenhuma conta cadastrada."
