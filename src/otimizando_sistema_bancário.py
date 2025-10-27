@@ -1,3 +1,5 @@
+from constants import Constants
+
 def menu():
     print("\n=== Menu ===")
     print("[d] Depositar")
@@ -41,7 +43,7 @@ def depositar(contas, cpf=None, numero_conta=None):
             break
 
     if not conta_encontrada:
-        print("Operação falhou! Conta não encontrada para o CPF informado.")
+        print(Constants.FAIL_INVALID_ACCOUNT_MESSAGE)
         return contas
 
     saldo_atual = conta_encontrada.get("saldo", 0)
@@ -59,15 +61,15 @@ def sacar(contas):
     import re
 
     if len(contas) == 0:
-        print("Operação falhou! Nenhuma conta cadastrada.")
+        print(Constants.FAIL_OPERATION_MESSAGE)
         return contas
 
-    cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+    cpf = input(Constants.INFO_CPF_MESSAGE).strip()
     if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
-        print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+        print(Constants.FAIL_CPF_MESSAGE)
         return contas
 
-    numero_conta = input("Informe o número da conta: ").strip()
+    numero_conta = input(Constants.INFO_ACCOUNT_NUMBER_MESSAGE).strip()
     valor = float(input("Informe o valor do saque: "))
 
     conta_encontrada = None
@@ -80,7 +82,7 @@ def sacar(contas):
             break
 
     if not conta_encontrada:
-        print("Operação falhou! Conta não encontrada para o CPF informado.")
+        print(Constants.FAIL_INVALID_ACCOUNT_MESSAGE)
         return contas
 
     saldo_conta = conta_encontrada.get("saldo", 0)
@@ -111,11 +113,13 @@ def sacar(contas):
 def exibir_extrato(contas):
 
     if len(contas) == 0:
-        print("Operação falhou! Nenhuma conta cadastrada.")
+        print(
+            Constants.FAIL_OPERATION_MESSAGE
+        )
         return
 
     cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
-    numero_conta = input("Informe o número da conta: ").strip()
+    numero_conta = input(Constants.INFO_ACCOUNT_NUMBER_MESSAGE).strip()
 
     conta_encontrada = None
     for conta in contas:
@@ -127,7 +131,7 @@ def exibir_extrato(contas):
             break
 
     if not conta_encontrada:
-        print("Operação falhou! Conta não encontrada para o CPF informado.")
+        print(Constants.FAIL_INVALID_ACCOUNT_MESSAGE)
         return
 
     saldo_conta = conta_encontrada.get("saldo", 0)
@@ -149,10 +153,10 @@ def criar_usuario(usuarios):
     import re
     from datetime import datetime
 
-    cpf = input("Informe o CPF (formato xxx.xxx.xxx-xx): ").strip()
+    cpf = input(Constants.INFO_CPF_MESSAGE).strip()
     if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
         print(
-            "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx com 11 dígitos."
+            Constants.FAIL_CPF_MESSAGE
         )
         return usuarios
 
@@ -195,10 +199,10 @@ def filtrar_usuario(cpf, usuarios):
 def criar_conta(agencia, numero_conta, usuarios):
     import re
 
-    cpf = input("Informe o CPF do usuário (formato xxx.xxx.xxx-xx): ").strip()
+    cpf = input(Constants.INFO_CPF_MESSAGE).strip()
 
     if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
-        print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+        print(Constants.FAIL_CPF_MESSAGE)
         return None
 
     usuario = filtrar_usuario(cpf, usuarios)
@@ -225,13 +229,13 @@ def listar_contas(contas):
     import re
 
     cpf = input(
-        "Informe o CPF, (formato xxx.xxx.xxx-xx), para filtrar as contas (pressione Enter para listar todas): "
+        Constants.INFO_CPF_MESSAGE
     ).strip()
 
     contas_filtradas = contas
     if cpf:
         if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", cpf):
-            print("CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx.")
+            print(Constants.FAIL_CPF_MESSAGE)
             return
         contas_filtradas = [
             conta for conta in contas if conta["usuario"].get("cpf") == cpf
