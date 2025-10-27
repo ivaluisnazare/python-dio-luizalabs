@@ -2,9 +2,8 @@ name: SonarCloud
 on:
   pull_request:
     branches:
-      - master
-      - develop
-      - feature/**
+      - main
+      - release/**
 
 jobs:
   sonarcloud:
