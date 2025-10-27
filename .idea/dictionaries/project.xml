@@ -2,8 +2,10 @@
   <dictionary name="project">
     <words>
       <w>agencia</w>
+      <w>atualizadas</w>
       <w>autorizado</w>
       <w>bairro</w>
+      <w>bancario</w>
       <w>cadastrada</w>
       <w>cidade</w>
       <w>conta</w>
@@ -40,13 +42,17 @@
       <w>informado</w>
       <w>informe</w>
       <w>insuficiente</w>
+      <w>invalido</w>
       <w>inválida</w>
       <w>inválido</w>
+      <w>ivaluisnazare</w>
       <w>limite</w>
       <w>listar</w>
       <w>logradouro</w>
       <w>movimentações</w>
       <w>movimentos</w>
+      <w>nazare</w>
+      <w>nazaré</w>
       <w>nenhuma</w>
       <w>novamente</w>
       <w>numéricos</w>
@@ -63,9 +69,11 @@
       <w>saques</w>
       <w>selecione</w>
       <w>senha</w>
+      <w>sistema</w>
       <w>somente</w>
       <w>sucesso</w>
       <w>todas</w>
+      <w>trilha</w>
       <w>usuario</w>
       <w>usuarios</w>
       <w>usuário</w>
