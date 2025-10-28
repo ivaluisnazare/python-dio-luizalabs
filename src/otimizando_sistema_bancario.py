@@ -1,6 +1,7 @@
-from src.constant import Constants
 import re
 from datetime import datetime
+
+from src.constant import Constants
 
 
 def menu():
@@ -18,8 +19,10 @@ def menu():
 def encontrar_conta(contas, cpf, numero_conta):
     """Função auxiliar para encontrar uma conta específica"""
     for conta in contas:
-        if (str(conta.get("numero_conta")) == numero_conta and
-                conta.get("usuario", {}).get("cpf") == cpf):
+        if (
+            str(conta.get("numero_conta")) == numero_conta
+            and conta.get("usuario", {}).get("cpf") == cpf
+        ):
             return conta
     return None
 
@@ -172,12 +175,14 @@ def criar_usuario(usuarios):
         "Informe o endereço (logradouro, número - bairro - cidade/sigla estado): "
     ).strip()
 
-    usuarios.append({
-        "nome": nome,
-        "data_nascimento": data_nascimento,
-        "cpf": cpf,
-        "endereco": endereco,
-    })
+    usuarios.append(
+        {
+            "nome": nome,
+            "data_nascimento": data_nascimento,
+            "cpf": cpf,
+            "endereco": endereco,
+        }
+    )
 
     print("Usuário criado com sucesso!")
     return usuarios
@@ -236,12 +241,14 @@ def listar_contas(contas):
         usuario = conta["usuario"]
         saldo = conta.get("saldo", 0)
         print("==============================")
-        print(f"""\
+        print(
+            f"""\
 Agência: {conta['agencia']}
 Número da Conta: {conta['numero_conta']}
 Titular: {usuario['nome']}
 CPF: {usuario.get('cpf', 'N/A')}
-Saldo: R$ {saldo:.2f}""")
+Saldo: R$ {saldo:.2f}"""
+        )
 
 
 def main():
@@ -271,7 +278,9 @@ def main():
         elif opcao == "q":
             break
         else:
-            print("Operação inválida, por favor selecione novamente a operação desejada.")
+            print(
+                "Operação inválida, por favor selecione novamente a operação desejada."
+            )
 
 
 if __name__ == "__main__":

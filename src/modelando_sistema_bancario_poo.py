@@ -1,7 +1,9 @@
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
+
 from src.constant import Constants
+
 
 def validar_cpf(func):
     def wrapper(*args, **kwargs):
@@ -305,9 +307,7 @@ class SistemaBancario:
     def criar_usuario(self):
         cpf = input(Constants.INFO_CPF_MESSAGE).strip()
         if not re.match(Constants.CPF_PATTERN, cpf):
-            print(
-                Constants.FAIL_CPF_MESSAGE
-            )
+            print(Constants.FAIL_CPF_MESSAGE)
             return
 
         cliente = self.filtrar_cliente(cpf)
@@ -351,9 +351,7 @@ class SistemaBancario:
         print("Conta criada com sucesso!")
 
     def listar_contas(self):
-        cpf = input(
-            Constants.INFO_CPF_MESSAGE
-        ).strip()
+        cpf = input(Constants.INFO_CPF_MESSAGE).strip()
 
         contas_filtradas = self.contas
         if cpf:
