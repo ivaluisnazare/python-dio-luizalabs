@@ -1,32 +1,40 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-import re
-from src.modelando_sistema_bancario_poo import (
-    Cliente, PessoaFisica, Conta, ContaCorrente, Historico,
-    Saque, Deposito, SistemaBancario, validar_cpf, verificar_contas,
-    Transacao
-)
-from unittest.mock import patch, MagicMock, call
 from src.constant import Constants
-from io import StringIO
-import sys
+from src.modelando_sistema_bancario_poo import (Cliente, Conta, ContaCorrente,
+                                                Deposito, Historico,
+                                                PessoaFisica, Saque,
+                                                SistemaBancario, Transacao,
+                                                validar_cpf, verificar_contas)
 
 
 class TestConstants:
-    """Testes para as constantes"""
 
     def test_constants_values(self):
         assert Constants.CPF_PATTERN == r"^\d{3}\.\d{3}\.\d{3}-\d{2}$"
         assert Constants.BRANCH == "0001"
-        assert Constants.FAIL_CPF_MESSAGE == "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx."
-        assert Constants.FAIL_VALUE_MESSAGE == "Operação falhou! O valor informado é inválido."
-        assert Constants.FAIL_OPERATION_MESSAGE == "Operação falhou! Nenhuma conta cadastrada."
+        assert (
+            Constants.FAIL_CPF_MESSAGE
+            == "CPF inválido! O CPF deve estar no formato xxx.xxx.xxx-xx."
+        )
+        assert (
+            Constants.FAIL_VALUE_MESSAGE
+            == "Operação falhou! O valor informado é inválido."
+        )
+        assert (
+            Constants.FAIL_OPERATION_MESSAGE
+            == "Operação falhou! Nenhuma conta cadastrada."
+        )
         assert Constants.INFO_CPF_MESSAGE == "Informe o CPF (formato xxx.xxx.xxx-xx): "
         assert Constants.INFO_ACCOUNT_NUMBER_MESSAGE == "Informe o número da conta: "
-        assert Constants.FAIL_REGISTERED_CPF_MESSAGE == "Já existe um usuário com esse CPF!"
+        assert (
+            Constants.FAIL_REGISTERED_CPF_MESSAGE
+            == "Já existe um usuário com esse CPF!"
+        )
 
 
 class TestDecorators:
-    """Testes para os decoradores"""
 
     def test_validar_cpf_valido(self):
         @validar_cpf
@@ -92,7 +100,6 @@ class TestDecorators:
 
 
 class TestCliente:
-    """Testes para a classe Cliente"""
 
     def test_cliente_init(self):
         cliente = Cliente("Rua A, 123")
@@ -115,14 +122,10 @@ class TestCliente:
 
 
 class TestPessoaFisica:
-    """Testes para a classe PessoaFisica"""
 
     def test_pessoa_fisica_init(self):
         pessoa = PessoaFisica(
-            "João Silva",
-            "01/01/1990",
-            "123.456.789-00",
-            "Rua A, 123"
+            "João Silva", "01/01/1990", "123.456.789-00", "Rua A, 123"
         )
         assert pessoa.nome == "João Silva"
         assert pessoa.data_nascimento == "01/01/1990"
@@ -138,7 +141,6 @@ class TestPessoaFisica:
 
 
 class TestConta:
-    """Testes para a classe Conta"""
 
     def test_conta_init(self):
         cliente_mock = MagicMock()
@@ -241,7 +243,6 @@ class TestConta:
 
 
 class TestContaCorrente:
-    """Testes para a classe ContaCorrente"""
 
     def test_conta_corrente_init(self):
         cliente_mock = MagicMock()
@@ -296,7 +297,9 @@ class TestContaCorrente:
 
         captured = capsys.readouterr()
         assert result is False
-        assert "Operação falhou! Número máximo de saques diários excedido." in captured.out
+        assert (
+            "Operação falhou! Número máximo de saques diários excedido." in captured.out
+        )
 
     def test_conta_corrente_sacar_sucesso(self):
         cliente_mock = MagicMock()
@@ -326,7 +329,6 @@ class TestContaCorrente:
 
 
 class TestHistorico:
-    """Testes para a classe Historico"""
 
     def test_historico_init(self):
         historico = Historico()
@@ -368,20 +370,18 @@ class TestHistorico:
 
 
 class TestTransacaoABC:
-    """Testes para a classe abstrata Transacao"""
 
     def test_transacao_abc_nao_pode_ser_instanciada(self):
         with pytest.raises(TypeError):
             Transacao()
 
     def test_transacao_abc_tem_metodos_abstratos(self):
-        assert hasattr(Transacao, 'valor')
-        assert hasattr(Transacao, 'registrar')
+        assert hasattr(Transacao, "valor")
+        assert hasattr(Transacao, "registrar")
         assert Transacao.registrar.__isabstractmethod__
 
 
 class TestSaque:
-    """Testes para a classe Saque"""
 
     def test_saque_init(self):
         saque = Saque(100.0)
@@ -415,7 +415,6 @@ class TestSaque:
 
 
 class TestDeposito:
-    """Testes para a classe Deposito"""
 
     def test_deposito_init(self):
         deposito = Deposito(200.0)
@@ -449,7 +448,6 @@ class TestDeposito:
 
 
 class TestSistemaBancario:
-    """Testes para a classe SistemaBancario"""
 
     def test_sistema_bancario_init(self):
         sistema = SistemaBancario()
@@ -459,9 +457,7 @@ class TestSistemaBancario:
 
     def test_filtrar_cliente_cpf_valido_encontrado(self):
         sistema = SistemaBancario()
-        cliente = PessoaFisica(
-            "João", "01/01/1990", "123.456.789-00", "Rua A"
-        )
+        cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         sistema.clientes.append(cliente)
 
         resultado = sistema.filtrar_cliente(cpf="123.456.789-00")
@@ -487,9 +483,7 @@ class TestSistemaBancario:
 
     def test_filtrar_conta_encontrada(self):
         sistema = SistemaBancario()
-        cliente = PessoaFisica(
-            "João", "01/01/1990", "123.456.789-00", "Rua A"
-        )
+        cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
         sistema.contas.append(conta)
 
@@ -503,9 +497,7 @@ class TestSistemaBancario:
 
     def test_filtrar_conta_cpf_nao_corresponde(self):
         sistema = SistemaBancario()
-        cliente = PessoaFisica(
-            "João", "01/01/1990", "123.456.789-00", "Rua A"
-        )
+        cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
         sistema.contas.append(conta)
 
@@ -514,29 +506,27 @@ class TestSistemaBancario:
 
     def test_filtrar_conta_numero_nao_corresponde(self):
         sistema = SistemaBancario()
-        cliente = PessoaFisica(
-            "João", "01/01/1990", "123.456.789-00", "Rua A"
-        )
+        cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
         sistema.contas.append(conta)
 
         resultado = sistema.filtrar_conta("123.456.789-00", "2")
         assert resultado is None
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_menu(self, mock_input):
         mock_input.return_value = "d"
         sistema = SistemaBancario()
         resultado = sistema.menu()
         assert resultado == "d"
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_usuario_sucesso(self, mock_input):
         mock_input.side_effect = [
             "123.456.789-00",  # CPF
             "João Silva",  # Nome
             "01/01/1990",  # Data nascimento
-            "Rua A, 123"  # Endereço
+            "Rua A, 123",  # Endereço
         ]
 
         sistema = SistemaBancario()
@@ -549,7 +539,7 @@ class TestSistemaBancario:
         assert cliente.data_nascimento == "01/01/1990"
         assert cliente.endereco == "Rua A, 123"
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_usuario_cpf_invalido(self, mock_input, capsys):
         mock_input.return_value = "12345678900"  # CPF inválido
 
@@ -560,28 +550,27 @@ class TestSistemaBancario:
         assert len(sistema.clientes) == 0
         assert Constants.FAIL_CPF_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_usuario_cpf_ja_cadastrado(self, mock_input, capsys):
         mock_input.side_effect = [
             "123.456.789-00",  # CPF
             "João Silva",
             "01/01/1990",
-            "Rua A, 123"
+            "Rua A, 123",
         ]
 
         sistema = SistemaBancario()
         sistema.criar_usuario()
 
-        captured = capsys.readouterr()
         assert len(sistema.clientes) == 1
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_usuario_data_invalida(self, mock_input, capsys):
         mock_input.side_effect = [
             "123.456.789-00",
             "João Silva",
-            "01-01-1990",  # Data inválida
-            "Rua A, 123"
+            "01-01-1990",
+            "Rua A, 123",
         ]
 
         sistema = SistemaBancario()
@@ -591,12 +580,10 @@ class TestSistemaBancario:
         assert len(sistema.clientes) == 0
         assert "Data de nascimento inválida" in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_conta_sucesso(self, mock_input):
         # Primeiro criar um cliente
-        cliente = PessoaFisica(
-            "João", "01/01/1990", "123.456.789-00", "Rua A"
-        )
+        cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
 
         mock_input.return_value = "123.456.789-00"
 
@@ -611,7 +598,7 @@ class TestSistemaBancario:
         assert conta.numero == 1
         assert cliente.contas[0] == conta
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_conta_cliente_nao_encontrado(self, mock_input, capsys):
         mock_input.return_value = "123.456.789-00"
 
@@ -622,7 +609,7 @@ class TestSistemaBancario:
         assert len(sistema.contas) == 0
         assert "Usuário não encontrado" in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_criar_conta_cpf_invalido(self, mock_input, capsys):
         mock_input.return_value = "12345678900"
 
@@ -633,7 +620,7 @@ class TestSistemaBancario:
         assert len(sistema.contas) == 0
         assert Constants.FAIL_CPF_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_depositar_sucesso(self, mock_input):
         cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
@@ -644,14 +631,14 @@ class TestSistemaBancario:
         mock_input.side_effect = [
             "123.456.789-00",  # CPF
             "1",  # Número da conta
-            "100.0"  # Valor do depósito
+            "100.0",  # Valor do depósito
         ]
 
         sistema.depositar()
 
         assert conta.saldo == 100.0
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_depositar_cpf_invalido(self, mock_input, capsys):
         mock_input.return_value = "12345678900"
 
@@ -662,7 +649,7 @@ class TestSistemaBancario:
         captured = capsys.readouterr()
         assert Constants.FAIL_CPF_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_depositar_valor_invalido(self, mock_input, capsys):
         cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
@@ -670,11 +657,7 @@ class TestSistemaBancario:
         sistema.clientes.append(cliente)
         sistema.contas.append(conta)
 
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "1",
-            "-50.0"  # Valor inválido
-        ]
+        mock_input.side_effect = ["123.456.789-00", "1", "-50.0"]
 
         sistema.depositar()
 
@@ -682,67 +665,55 @@ class TestSistemaBancario:
         assert "Operação falhou! O valor informado é inválido." in captured.out
         assert conta.saldo == 0.0
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_depositar_conta_nao_encontrada(self, mock_input, capsys):
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "999",  # Conta não existente
-            "100.0"
-        ]
+        mock_input.side_effect = ["123.456.789-00", "999", "100.0"]
 
         sistema = SistemaBancario()
-        sistema.contas.append(MagicMock())  # Para passar pelo decorator
+        sistema.contas.append(MagicMock())
         sistema.depositar()
 
         captured = capsys.readouterr()
         assert Constants.FAIL_OPERATION_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_sacar_sucesso(self, mock_input):
         cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
-        conta.depositar(500.0)  # Depositar primeiro
+        conta.depositar(500.0)
         sistema = SistemaBancario()
         sistema.clientes.append(cliente)
         sistema.contas.append(conta)
 
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "1",
-            "100.0"
-        ]
+        mock_input.side_effect = ["123.456.789-00", "1", "100.0"]
 
         sistema.sacar()
 
         assert conta.saldo == 400.0
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_sacar_cpf_invalido(self, mock_input, capsys):
         mock_input.return_value = "12345678900"
 
         sistema = SistemaBancario()
-        sistema.contas.append(MagicMock())  # Para passar pelo decorator
+        sistema.contas.append(MagicMock())
         sistema.sacar()
 
         captured = capsys.readouterr()
         assert Constants.FAIL_CPF_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_sacar_conta_nao_encontrada(self, mock_input, capsys):
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "999",
-            "100.0"
-        ]
+        mock_input.side_effect = ["123.456.789-00", "999", "100.0"]
 
         sistema = SistemaBancario()
-        sistema.contas.append(MagicMock())  # Para passar pelo decorator
+        sistema.contas.append(MagicMock())
         sistema.sacar()
 
         captured = capsys.readouterr()
         assert Constants.FAIL_OPERATION_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_exibir_extrato_sucesso(self, mock_input, capsys):
         cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
@@ -751,10 +722,7 @@ class TestSistemaBancario:
         sistema.clientes.append(cliente)
         sistema.contas.append(conta)
 
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "1"
-        ]
+        mock_input.side_effect = ["123.456.789-00", "1"]
 
         sistema.exibir_extrato()
 
@@ -765,7 +733,7 @@ class TestSistemaBancario:
         assert "Depósito: R$ 300.00" in captured.out
         assert "Saldo atual: R$ 300.00" in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_exibir_extrato_sem_movimentacoes(self, mock_input, capsys):
         cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
@@ -773,31 +741,25 @@ class TestSistemaBancario:
         sistema.clientes.append(cliente)
         sistema.contas.append(conta)
 
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "1"
-        ]
+        mock_input.side_effect = ["123.456.789-00", "1"]
 
         sistema.exibir_extrato()
 
         captured = capsys.readouterr()
         assert "Não foram realizadas movimentações." in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_exibir_extrato_conta_nao_encontrada(self, mock_input, capsys):
-        mock_input.side_effect = [
-            "123.456.789-00",
-            "999"
-        ]
+        mock_input.side_effect = ["123.456.789-00", "999"]
 
         sistema = SistemaBancario()
-        sistema.contas.append(MagicMock())  # Para passar pelo decorator
+        sistema.contas.append(MagicMock())
         sistema.exibir_extrato()
 
         captured = capsys.readouterr()
         assert Constants.FAIL_OPERATION_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_listar_contas_com_cpf(self, mock_input, capsys):
         cliente = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         conta = ContaCorrente(1, cliente)
@@ -817,7 +779,7 @@ class TestSistemaBancario:
         assert "CPF: 123.456.789-00" in captured.out
         assert "Saldo: R$ 500.00" in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_listar_contas_sem_cpf(self, mock_input, capsys):
         cliente1 = PessoaFisica("João", "01/01/1990", "123.456.789-00", "Rua A")
         cliente2 = PessoaFisica("Maria", "02/02/1985", "111.222.333-44", "Rua B")
@@ -835,7 +797,7 @@ class TestSistemaBancario:
         assert "João" in captured.out
         assert "Maria" in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_listar_contas_cpf_invalido(self, mock_input, capsys):
         mock_input.return_value = "12345678900"
 
@@ -845,7 +807,7 @@ class TestSistemaBancario:
         captured = capsys.readouterr()
         assert Constants.FAIL_CPF_MESSAGE in captured.out
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_listar_contas_sem_contas(self, mock_input, capsys):
         mock_input.return_value = ""
 
@@ -855,49 +817,37 @@ class TestSistemaBancario:
         captured = capsys.readouterr()
         assert "Nenhuma conta encontrada." in captured.out
 
+
 class TestIntegracao:
-    """Testes de integração entre as classes"""
 
     def test_fluxo_completo_cliente_conta_transacao(self):
-        # Criar cliente
-        cliente = PessoaFisica(
-            "Maria", "15/05/1985", "987.654.321-00", "Rua B, 456"
-        )
+        cliente = PessoaFisica("Maria", "15/05/1985", "987.654.321-00", "Rua B, 456")
 
-        # Criar conta
         conta = ContaCorrente(1, cliente)
         cliente.adicionar_conta(conta)
 
-        # Realizar transações
         deposito = Deposito(1000.0)
         saque = Saque(200.0)
 
         cliente.realizar_transacao(conta, deposito)
         cliente.realizar_transacao(conta, saque)
 
-        # Verificar resultados
         assert conta.saldo == 800.0
         assert len(conta.historico.transacoes) == 2
         assert conta.numero_saques == 1
 
-        # Verificar extrato
         assert "Depósito: R$ 1000.00" in conta.extrato
         assert "Saque: R$ 200.00" in conta.extrato
 
     def test_fluxo_multiplas_contas(self):
-        # Criar cliente
-        cliente = PessoaFisica(
-            "Carlos", "10/10/1975", "111.222.333-44", "Rua C, 789"
-        )
+        cliente = PessoaFisica("Carlos", "10/10/1975", "111.222.333-44", "Rua C, 789")
 
-        # Criar múltiplas contas
         conta1 = ContaCorrente(1, cliente)
         conta2 = ContaCorrente(2, cliente)
 
         cliente.adicionar_conta(conta1)
         cliente.adicionar_conta(conta2)
 
-        # Realizar transações em contas diferentes
         deposito1 = Deposito(500.0)
         deposito2 = Deposito(300.0)
         saque1 = Saque(100.0)
@@ -906,10 +856,18 @@ class TestIntegracao:
         cliente.realizar_transacao(conta2, deposito2)
         cliente.realizar_transacao(conta1, saque1)
 
-        # Verificar resultados
         assert conta1.saldo == 400.0
         assert conta2.saldo == 300.0
         assert len(cliente.contas) == 2
 
+
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "--cov=src.modelando_sistema_bancario_poo", "--cov-report=term-missing"])
+
+    pytest.main(
+        [
+            __file__,
+            "-v",
+            "--cov=src.modelando_sistema_bancario_poo",
+            "--cov-report=term-missing",
+        ]
+    )
